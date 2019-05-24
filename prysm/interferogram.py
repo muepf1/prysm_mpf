@@ -133,7 +133,7 @@ def make_window(signal, sample_spacing, which=None, alpha=4):
             else:
                 raise ValueError('unknown window type')
 
-    return which  # window provided as ndarray
+    return which.T  # window provided as ndarray
 
 
 def psd(height, sample_spacing, window=None):
