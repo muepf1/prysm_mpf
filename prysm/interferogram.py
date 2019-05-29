@@ -133,7 +133,7 @@ def make_window(signal, sample_spacing, which=None, alpha=4):
             else:
                 raise ValueError('unknown window type')
 
-    return which  # window provided as ndarray
+    return which.T  # window provided as ndarray
 
 
 def psd(height, sample_spacing, window=None):
@@ -622,6 +622,24 @@ class Interferogram(OpticalPhase):
         cy = (mxy + mny) / 2
         self.x -= cx
         self.y -= cy
+        return self
+    
+
+    def padtosquare(self):
+        """Adds rows or columns to (slightly) non-square interferograms"""
+        if self.samples_x != self.samples_y:
+            if self.samples_x < self.samples_y:
+                # add rows
+                dn=self.samples_y-self.samples_x
+                new = e.zeros((self.samples_y,dn))
+                new.fill(e.nan)
+                self.phase = e.hstack((self.phase, new))
+            else:
+                dn=self.samples_x-self.samples_y
+                new = e.zeros((dn,self.samples_x))
+                new.fill(e.nan)
+                self.phase = e.vstack((self.phase, new))
+                #add columns
         return self
 
     def remove_piston(self):
